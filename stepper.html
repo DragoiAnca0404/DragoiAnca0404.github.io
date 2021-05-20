@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="shortcut icon" type="image/jpg" href="images\logo.png" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="CSS/stepper.css">
+  <link rel="stylesheet" href="CSS/index.css" />
+  <link rel="stylesheet" href="CSS/testing.css"/>
+
+  <script src="JAVASCRIPT/main.js"></script>
+  <script src="JAVASCRIPT/training.js"></script>
+  <script src="JAVASCRIPT/testing.js"></script>
+  <script src="JAVASCRIPT/stepper.js"></script>
+  <script src="JAVASCRIPT/drawHand.js"></script>
+
+  <script src="https://unpkg.com/@tensorflow/tfjs-core@2.1.0/dist/tf-core.js"></script>
+  <script src="https://unpkg.com/@tensorflow/tfjs-converter@2.1.0/dist/tf-converter.js"></script>
+  <script src="https://unpkg.com/@tensorflow-models/handpose@0.0.6/dist/handpose.js"></script>
+  <script src="https://unpkg.com/@tensorflow/tfjs-backend-webgl@2.1.0/dist/tf-backend-webgl.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-cpu@2.0.0-rc.4/dist/tf-backend-cpu.es2017.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/deeplearn@latest"></script>
+  <script src="https://unpkg.com/deeplearn-knn-image-classifier"></script>
+  <meta charset="utf-8">
+  <title>Translator Al Limbajului Surdo-Mutilor In Lumea Reala</title>
+</head>
+
+<body class="background mt-4" onload="loadPage()">
+  <div class="container">
+    <div class="stepwizard">
+      <div class="stepwizard-row setup-panel">
+        <div class="stepwizard-step">
+          <a href="#step-1" type="button" class="btn btn-primary step-icon">
+            <i class="fa fa-cogs"></i>
+          </a>
+          <h4 class="text-center">Antrenare</h4>
+        </div>
+        <div class="stepwizard-step">
+          <a href="#step-2" type="button" class="btn btn-default step-icon" disabled="disabled">
+            <i class="fa fa-graduation-cap"></i>
+          </a>
+          <h4 class="text-center">Testare</h4>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5">
+      <h5 id="status" class="text-center">Status</h5>
+      <div class="row setup-content" id="step-1">
+        <div class="row">
+          <div class="d-flex ml-5 container-custom">
+            <video id="videoElement" width="227px" height="227px" class="videostream videoElement" autoplay="true"
+              onloadeddata="main()"></video>
+            <canvas id="canvas" class="canvas-style loader"></canvas>
+          </div>
+          <div class="col mr-5 fixed-width">
+            <div id="insertForm" class="text-center">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Introduceti Cuvantul</span>
+                </div>
+                <input id="wordInput" type="text" class="form-control" aria-label="Default"
+                  aria-describedby="inputGroup-sizing-default">
+              </div>
+              <button class="btn btn-primary mb-3" onclick="displayTrainForm()">
+                <i class="fa fa-plus-circle"></i> Adauga Cuvant
+              </button>
+            </div>
+            <div id="trainForm" class="text-center d-none">
+              <p id="insertedWord"></p>
+              <button class="btn btn-primary mb-3" onclick="captureImage()">
+                <i class="fa fa-camera-retro"></i>
+                Capteaza Imagine
+              </button>
+              <div class="mb-3">
+                <button id="saveButton" class="btn btn-success" onclick="saveWord()">
+                  <i class="fa fa-save"></i>
+                  Salveaza Cuvant
+                </button>
+                <button class="btn btn-danger" onclick="displayInsertForm(); removeWordFromKnn()">
+                  <i class="fa fa-ban"></i>
+                  Anuleaza
+                </button>
+              </div>
+              <button class="btn btn-primary mb-3" onclick="removeCapturedImages()">
+                <i class="fa fa-trash"></i>
+                Sterge Imagini Captate
+              </button>
+              <div>
+                <p>Nr Imagini Captate:</p>
+                <b id="trainedPictures" class="red"></b>
+              </div>
+              <div id="showRequirementsInfo">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row setup-content" id="step-2">
+        <div class="row">
+          <div class="d-flex ml-5 container-custom">
+            <video id="videoElementTesting" width="227px" height="227px" class="videostream videoElement"
+              autoplay="true"></video>
+            <canvas id="canvasTesting" class="canvas-style loader"></canvas>
+          </div>
+          <div class="col mr-5 fixed-width">
+            <button class="btn btn-secondary float-right" onclick="clearIdentifiedWords()">
+              <i class="fa fa-trash"></i> Sterge Traduceri
+            </button>
+            <textarea id="identifiedWords" class="form-control translated-text" style="height: 323px;"
+              readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="mt-4 text-center">
+    <h3>
+      <i class="fa fa-book" aria-hidden="true"></i>
+      Cuvinte Antrenate
+    </h3>
+    <hr>
+    <h4 id="noCardsInContainer">Nu exista cuvinte antrenate. Incepeti prin a introduce si a salva un cuvant.</h4>
+  </div>
+  <div id="cardsContainer" class="row">
+  </div>
+</body>
+
+</html>
